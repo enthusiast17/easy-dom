@@ -1,6 +1,8 @@
 # easy-dom
 
-Status: `not completed`, I am working on this.
+```markdown
+ATTENTION! This library is not completed yet.
+```
 
 Just a little library to manipulate DOM.
 
