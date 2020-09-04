@@ -1,5 +1,7 @@
 # easy-dom
 
+Status: `not completed`, I am working on this.
+
 Just a little library to manipulate DOM.
 
 Example code:
