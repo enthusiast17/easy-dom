@@ -9,7 +9,12 @@ import state from './state.js'
     Element
 */
 
-export const createElement = (type) => document.createElement(type)
+export const createElement = (obj) => {
+    const element = document.createElement(obj.type)
+    obj = deleteAttributes(obj, ['type'])
+    changeElementAttributes(element, obj)
+    return element
+}
 
 export const changeElementAttributes = (element, attributes) => Object.assign(element, attributes)
 
@@ -19,20 +24,24 @@ export const changeElementAttributes = (element, attributes) => Object.assign(el
 */
 
 export const createContainer = (obj) => {
-    if (obj.children.length !== 0 && 'tagName' in obj.parent && obj.parent.tagName !== 'DIV' && obj.parent.tagName !== 'BODY' ||
+    const parseObject = (obj) => {
+        if (obj.children.length !== 0 && 'tagName' in obj.parent && obj.parent.tagName !== 'DIV' && obj.parent.tagName !== 'BODY' ||
         obj.children.length !== 0 && 'type' in obj.parent && obj.parent.type !== 'div') {
-        throw new Error("The key 'children' must be empty if the key 'type' value is not 'div'")
-    } 
+            throw new Error("The key 'children' must be empty if the key 'type' value is not 'div'")
+        } 
 
-    return obj.children.reduce((parent, child) => {
-        if (child.children.length === 0) {
-            parent.appendChild(toElement(child.parent))
-        } else {
-            parent.appendChild(toElement(createContainer(child)))
-            addContainerToState(parent)
-        }
-        return parent
-    }, toElement(obj.parent))
+        return obj.children.reduce((parent, child) => {
+            if (child.children.length === 0) {
+                parent.appendChild(toElement(child.parent))
+            } else {
+                parent.appendChild(toElement(parseObject(child)))
+                addContainerToState(parent)
+            }
+            return parent
+        }, toElement(obj.parent))
+    }
+    
+    parseObject(obj)
 }
 
 const addContainerToState = (element) => {
@@ -52,10 +61,7 @@ const addContainerToState = (element) => {
 
 const toElement = (obj) => {
     if (obj.tagName === 'BODY' || obj.tagName === 'DIV') return obj
-    const element = createElement(obj.type)
-    obj = deleteAttributes(obj, ['type', 'parent'])
-    changeElementAttributes(element, obj)
-    return element
+    return createElement(obj)
 }
 
 const deleteAttributes = (attributes, keys) => Object.fromEntries(Object.entries(attributes).filter(([k, v]) => !keys.includes(k)))
