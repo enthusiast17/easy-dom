@@ -1,0 +1,1 @@
+console.log(/^[a-zA-Z0-9_]*$/.test('012'))

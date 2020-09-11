@@ -31,7 +31,7 @@ export const createContainer = (obj) => {
     } 
 
     return obj.children.reduce((parent, child) => {
-        if (child.children.length === 0) {
+        if (child.children.length === 0 || child.children.length === 0 && child.parent.id === undefined) {
             parent.appendChild(toElement(child.parent))
         } else {
             parent.appendChild(toElement(createContainer(child)))
