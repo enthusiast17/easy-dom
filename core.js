@@ -35,8 +35,8 @@ export const createContainer = (obj) => {
             parent.appendChild(toElement(child.parent))
         } else {
             parent.appendChild(toElement(createContainer(child)))
-            addContainerToState(parent)
         }
+        addContainerToState(parent)
         return parent
     }, toElement(obj.parent))
 }
@@ -52,6 +52,6 @@ const toElement = (obj) => (obj.tagName === 'BODY' || obj.tagName === 'DIV') ? o
 
 const deleteAttributes = (attributes, keys) => Object.fromEntries(Object.entries(attributes).filter(([k, v]) => !keys.includes(k)))
 
-export const getContainer = (id) => state.containers.find((element) => element.id === id).container.element
+export const getContainer = (id) => state.containers.find((element) => element.id === id)
 
-export const isContainerExist = (id) => state.containers.every((element) => element.id === id)
+export const isContainerExist = (id) => state.containers.some((element) => element.id === id)
