@@ -24,22 +24,15 @@ export const changeElementAttributes = (element, attributes) => Object.assign(el
     Container
 */
 
-export const createContainer = (obj) => {
-    if (obj.children.length !== 0 && 'tagName' in obj.parent && obj.parent.tagName !== 'DIV' && obj.parent.tagName !== 'BODY' ||
-        obj.children.length !== 0 && 'type' in obj.parent && obj.parent.type !== 'div') {
-        throw new Error("The key 'children' must be empty if the key 'type' value is not 'div'")
-    } 
-
-    return obj.children.reduce((parent, child) => {
-        if (child.children.length === 0 || child.children.length === 0 && child.parent.id === undefined) {
-            parent.appendChild(toElement(child.parent))
-        } else {
-            parent.appendChild(toElement(createContainer(child)))
-        }
-        addContainerToState(parent)
-        return parent
-    }, toElement(obj.parent))
-}
+export const createContainer = (obj) => obj.children.reduce((parent, child) => {
+    if (child.children.length === 0 || child.children.length === 0 && child.parent.id === undefined) {
+        parent.appendChild(toElement(child.parent))
+    } else {
+        parent.appendChild(toElement(createContainer(child)))
+    }
+    addContainerToState(parent)
+    return parent
+}, toElement(obj.parent))
 
 const addContainerToState = (element) => {
     if (element.tagName === 'BODY') return
@@ -48,7 +41,7 @@ const addContainerToState = (element) => {
     }
 }
 
-const toElement = (obj) => (obj.tagName === 'BODY' || obj.tagName === 'DIV') ? obj : createElement(obj)
+const toElement = (obj) => ('tagName' in obj) ? obj : createElement(obj)
 
 const deleteAttributes = (attributes, keys) => Object.fromEntries(Object.entries(attributes).filter(([k, v]) => !keys.includes(k)))
 
